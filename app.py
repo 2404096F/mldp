@@ -3,43 +3,35 @@ import pandas as pd
 import joblib
 import base64
 
-def set_blurry_bg(image_file, blur_px=10):
+def set_blurry_bg(image_file, blur_px=12):
     with open(image_file, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
     css = f"""
     <style>
-    /* Blurred full-page background layer */
+    /* Blurred background image */
     .blurry-bg {{
         position: fixed;
         z-index: 0;
         width: 100vw;
         height: 100vh;
-        left: 0; top: 0;
+        top: 0; left: 0;
         background: url("data:image/jpg;base64,{encoded}") center/cover no-repeat fixed;
-        filter: blur({blur_px}px);
-        opacity: 0.8;
+        filter: blur({blur_px}px) brightness(0.8);
+        opacity: 1;
         pointer-events: none;
     }}
-    /* App content sits above the blurred image */
     .stApp {{
         position: relative;
         z-index: 1;
-    }}
-    .stApp > .main {{
-        background: rgba(255,255,255,0.88) !important;
-        border-radius: 18px;
-        padding: 2.5rem 2rem 2rem 2rem;
-        margin: 30px auto;
-        box-shadow: 0 4px 30px rgba(0,0,0,0.10),0 1.5px 4px rgba(0,0,0,0.06);
-        max-width: 800px;
     }}
     </style>
     <div class="blurry-bg"></div>
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# Call this at the very top with your image filename and desired blur (e.g., 10)
-set_blurry_bg("image.jpg", blur_px=10)
+# Place at the very top of your Streamlit script
+set_blurry_bg("image.jpg", blur_px=12)
+
 
 # --- All your Streamlit code follows here (no change needed below) ---
 
