@@ -3,41 +3,20 @@ import pandas as pd
 import joblib
 import base64
 
-def set_blurry_bg(image_file, blur_px=12):
-    with open(image_file, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
-    css = f"""
-    <style>
-    /* Blurred background image */
-    .blurry-bg {{
-        position: fixed;
-        z-index: 0;
-        width: 100vw;
-        height: 100vh;
-        top: 0; left: 0;
-        background: url("data:image/jpg;base64,{encoded}") center/cover no-repeat fixed;
-        filter: blur({blur_px}px) brightness(0.8);
-        opacity: 1;
-        pointer-events: none;
-    }}
-    .stApp {{
-        position: relative;
-        z-index: 1;
-    }}
-    </style>
-    <div class="blurry-bg"></div>
-    """
-    st.markdown(css, unsafe_allow_html=True)
-
-# Place at the very top of your Streamlit script
-set_blurry_bg("image.jpg", blur_px=12)
+st.markdown("""
+<style>
+    .stApp {
+            background-image: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4)),
+            url("https://omy.sg/wp-content/uploads/2023/12/What-Documents-Are-Required-for-A-Personal-Loan-In-Singapores.png");
+        background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            }
+            <style>
+            """,unsafe_allow_html=True
+)
 
 
-# --- All your Streamlit code follows here (no change needed below) ---
-
-# ... (rest of your app, as in your previous version) ...
-
-# ---- Load trained model ----
 model = joblib.load('model.pkl')
 
 # ---- List all feature columns in correct order ----
