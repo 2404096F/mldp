@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 import base64
 
-def set_bg_image(image_file):
+def set_blurry_bg(image_file, blur_px=8):
     with open(image_file, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
     css = f"""
@@ -14,13 +14,22 @@ def set_bg_image(image_file):
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        filter: blur({blur_px}px);
+        /* Make child containers unblurred */
+    }}
+    /* Optional: remove blur for Streamlit widgets and main area */
+    .main, .block-container {{
+        backdrop-filter: blur(0px)!important;
+        background: rgba(255,255,255,0.80); /* semi-transparent to view blurry bg */
+        border-radius: 8px;
+        padding: 1rem;
     }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# Call the function at the start of your app
-set_bg_image("image.jpg")
+# Call this early in your app
+set_blurry_bg("image.jpg", blur_px=8)
 
 # ---- Load trained model ----
 model = joblib.load('model.pkl')
