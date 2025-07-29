@@ -3,33 +3,47 @@ import pandas as pd
 import joblib
 import base64
 
-def set_blurry_bg(image_file, blur_px=8):
+def set_bg_image(image_file):
     with open(image_file, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
     css = f"""
     <style>
-    .stApp {{
+    /* Non-blurry full page background image layer */
+    .stApp::before {{
+        content: "";
         background-image: url("data:image/jpg;base64,{encoded}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        filter: blur({blur_px}px);
-        /* Make child containers unblurred */
+        opacity: 0.7;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
     }}
-    /* Optional: remove blur for Streamlit widgets and main area */
-    .main, .block-container {{
-        backdrop-filter: blur(0px)!important;
-        background: rgba(255,255,255,0.80); /* semi-transparent to view blurry bg */
-        border-radius: 8px;
-        padding: 1rem;
+    /* White card for app content */
+    .stApp > .main {{
+        background: rgba(255,255,255,0.85) !important;
+        border-radius: 18px;
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin: 30px auto;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.10),0 1.5px 4px rgba(0,0,0,0.06);
+        max-width: 800px;
+        position: relative;
+        z-index: 1;
     }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
 
 # Call this early in your app
-set_blurry_bg("image.jpg", blur_px=8)
+set_bg_image("image.jpg")  # Use your image’s filename
+
+# --- All your Streamlit code follows here (no change needed below) ---
+
+# ... (rest of your app, as in your previous version) ...
 
 # ---- Load trained model ----
 model = joblib.load('model.pkl')
