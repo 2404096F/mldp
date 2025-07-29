@@ -1,7 +1,26 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
 import joblib
+import base64
+
+def set_bg_image(image_file):
+    with open(image_file, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+    css = f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{encoded}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+# Call the function at the start of your app
+set_bg_image("image.jpg")
 
 # ---- Load trained model ----
 model = joblib.load('model.pkl')
@@ -35,7 +54,7 @@ credit_score = st.number_input("Credit Score", min_value=0, max_value=900, value
 education = st.selectbox("Education", ["Bachelor", "Doctorate", "High School", "Master"])
 home_ownership = st.selectbox("Home Ownership", ["OTHER", "OWN", "RENT"])
 loan_intent = st.selectbox("Loan Purpose", ["EDUCATION", "HOMEIMPROVEMENT", "MEDICAL", "PERSONAL", "VENTURE"])
-previous_defaults = st.selectbox("Previous Loan Default on File", ["No", "Yes"])
+previous_defaults = st.selectbox("Did you fail to repay any previous loans?", ["No", "Yes"])
 
 # Derived feature
 if income > 0:
