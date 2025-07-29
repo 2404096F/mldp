@@ -3,43 +3,43 @@ import pandas as pd
 import joblib
 import base64
 
-def set_bg_image(image_file):
+def set_blurry_bg(image_file, blur_px=10):
     with open(image_file, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
     css = f"""
     <style>
-    /* Non-blurry full page background image layer */
-    .stApp::before {{
-        content: "";
-        background-image: url("data:image/jpg;base64,{encoded}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        opacity: 0.7;
+    /* Blurred full-page background layer */
+    .blurry-bg {{
         position: fixed;
-        top: 0; left: 0;
+        z-index: 0;
         width: 100vw;
         height: 100vh;
-        z-index: 0;
+        left: 0; top: 0;
+        background: url("data:image/jpg;base64,{encoded}") center/cover no-repeat fixed;
+        filter: blur({blur_px}px);
+        opacity: 0.8;
+        pointer-events: none;
     }}
-    /* White card for app content */
+    /* App content sits above the blurred image */
+    .stApp {{
+        position: relative;
+        z-index: 1;
+    }}
     .stApp > .main {{
-        background: rgba(255,255,255,0.85) !important;
+        background: rgba(255,255,255,0.88) !important;
         border-radius: 18px;
         padding: 2.5rem 2rem 2rem 2rem;
         margin: 30px auto;
         box-shadow: 0 4px 30px rgba(0,0,0,0.10),0 1.5px 4px rgba(0,0,0,0.06);
         max-width: 800px;
-        position: relative;
-        z-index: 1;
     }}
     </style>
+    <div class="blurry-bg"></div>
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# Call this early in your app
-set_bg_image("image.jpg")  # Use your image’s filename
+# Call this at the very top with your image filename and desired blur (e.g., 10)
+set_blurry_bg("image.jpg", blur_px=10)
 
 # --- All your Streamlit code follows here (no change needed below) ---
 
