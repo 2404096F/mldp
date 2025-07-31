@@ -55,7 +55,6 @@ loan_intent_options = [
     "DEBTCONSOLIDATION", "EDUCATION", "HOMEIMPROVEMENT", "MEDICAL",
     "PERSONAL", "VENTURE"
 ]
-previous_defaults_options = ["No", "Yes"]
 
 features_dict = dict.fromkeys(columns, 0)
 
@@ -125,8 +124,6 @@ if income < 30000:
     recommendations.append("**Increase your annual income** to improve your approval odds.")
 if credit_score < 650:
     recommendations.append("**Raise your credit score** by paying bills on time and reducing debt.")
-if features_dict['previous_loan_defaults_on_file_No']:
-    recommendations.append("**Avoid future loan defaults**, as history of defaults severely impacts approval.")
 if loan_percent_income > 0.4:
     recommendations.append("**Lower the loan amount** or increase income so the loan is a smaller share of your income.")
 
@@ -142,7 +139,11 @@ features = input_df.values
 if st.button("Predict Loan Approval"):
     pred = model.predict(features)
     prob = model.predict_proba(features)[0][1]
-    if pred[0] == 1:
-        st.success(f"✅ Loan likely approved! (Confidence: {prob:.2f})")
+
+    if prob < 0.5:
+        st.error(f"Loan unlikely approved. (Confidence: {prob:.2f})")  # Red
+    elif prob < 0.8:
+        st.warning(f"Loan borderline. (Confidence: {prob:.2f})")     # Orange
     else:
-        st.error(f"❌ Loan likely NOT approved. (Confidence: {1-prob:.2f})")
+        st.success(f"Loan likely approved! (Confidence: {prob:.2f})")  # Green
+
