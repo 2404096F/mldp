@@ -120,6 +120,8 @@ features_dict[f'person_education_{education}'] = 1
 features_dict[f'person_home_ownership_{home_ownership}'] = 1
 features_dict[f'loan_intent_{loan_intent}'] = 1
 features_dict['previous_loan_defaults_on_file_Yes'] = int(previous_defaults == "Yes")
+features_dict['previous_loan_defaults_on_file_No'] = int(previous_defaults == "No")
+
 
 
 recommendations = []
